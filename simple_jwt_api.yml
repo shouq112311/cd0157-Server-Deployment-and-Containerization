@@ -4,11 +4,13 @@ metadata:
   name: simple-jwt-api
 spec:
   type: LoadBalancer
+  selector:
+    app: simple-jwt-api
   ports:
     - port: 80
       targetPort: 8080
-  selector:
-    app: simple-jwt-api
+      protocol: TCP
+
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -16,11 +18,6 @@ metadata:
   name: simple-jwt-api
 spec:
   replicas: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 2
-      maxSurge: 2
   selector:
     matchLabels:
       app: simple-jwt-api
@@ -31,10 +28,13 @@ spec:
     spec:
       containers:
         - name: simple-jwt-api
-          image: CONTAINER_IMAGE
+          image: 352567617413.dkr.ecr.us-east-2.amazonaws.com/udacity-flask-pipeline-ecrdockerrepository-cnkep4ghobw3:manual
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              value: "myjwtsecret"
           securityContext:
             privileged: false
             readOnlyRootFilesystem: false
             allowPrivilegeEscalation: false
-          ports:
-            - containerPort: 8080
