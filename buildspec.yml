@@ -1,19 +1,19 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.11
-    commands:
-      - echo "Starting Docker"
-      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
-      - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
-      - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.34.0/2025-05-22/bin/linux/amd64/kubectl
-      - chmod +x kubectl
-      - export PATH=$PWD:$PATH
-      - python -m pip install --upgrade pip awscli pytest
-      - yum install -y jq || (apt-get update && apt-get -y install jq)
-
+install:
+  runtime-versions:
+    python: 3.11
+  commands:
+    - echo "Starting Docker"
+    - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+    - timeout 30 sh -c "until docker info; do echo .; sleep 1; done"
+    - curl -L -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.34.0/2025-05-22/bin/linux/amd64/kubectl
+    - chmod +x kubectl
+    - export PATH=$PWD:$PATH
+    - python -m pip install --upgrade pip awscli pytest
+    - yum install -y jq || (apt-get update && apt-get -y install jq)
+    
   pre_build:
     commands:
       - TAG=$(date +%Y-%m-%d.%H.%M.%S)
